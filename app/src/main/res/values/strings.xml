@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Mvi_koin</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="blank_holder">blank_holder</string>
+    <string name="add">Add</string>
+    <string name="input_empty">Input Empty</string>
+</resources>

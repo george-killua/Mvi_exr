@@ -1,0 +1,2 @@
+rootProject.name = "Mvi_exr"
+include ':app'
