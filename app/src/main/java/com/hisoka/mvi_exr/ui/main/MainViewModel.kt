@@ -4,10 +4,10 @@ import androidx.databinding.*
 import com.hisoka.mvi_exr.data.*
 import com.hisoka.mvi_exr.data.UserListAdapter.UserDiff
 import com.hisoka.mvi_exr.data.model.UserEntity
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.core.component.*
 
-class MainViewModel() : BaseObservable() {
-				private val userRepository : UserRepository by inject<UserRepository>(UserRepository::class.java)
+class MainViewModel : BaseObservable(), KoinComponent {
+				private val userRepository : UserRepository by inject()
 
 				@Bindable
 				val adapter : UserListAdapter = UserListAdapter(UserDiff())
@@ -45,25 +45,28 @@ class MainViewModel() : BaseObservable() {
 																toastMessage = null
 												)
 												is Action.AddClicked -> (
-																				if (currentState.firstname.isBlank()) {
-																								currentState.copy(
-																												toastMessage = "Firstname is missed"
-																								)
-																				}
-																				else if (currentState.lastname.isBlank()) {
-																								currentState.copy(
-																												toastMessage = "Lastname is missed"
-																								)
-																				}
-																				else {
-																								currentState.apply {
-																												userRepository.insertUser(UserEntity(firstname = firstname,
-																																lastname = lastname))
-																												this.copy(
-																																firstname = "",
-																																lastname = "",
-																																toastMessage = "User Added"
+																				when {
+																								currentState.firstname.isBlank() -> {
+																												currentState.copy(
+																																toastMessage = "Firstname is missed"
 																												)
+																								}
+																								currentState.lastname.isBlank() -> {
+																												currentState.copy(
+																																toastMessage = "Lastname is missed"
+																												)
+																								}
+																								else -> {
+																												currentState.apply {
+																																userRepository.insertUser(UserEntity(firstname = firstname,
+																																				lastname = lastname))
+																																adapter.submitList(userRepository.getAllUser())
+																																this.copy(
+																																				firstname = "",
+																																				lastname = "",
+																																				toastMessage = "User Added"
+																																)
+																												}
 																								}
 																				}
 												                        )

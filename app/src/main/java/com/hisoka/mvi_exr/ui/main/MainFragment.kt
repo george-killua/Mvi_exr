@@ -5,7 +5,9 @@ import android.view.*
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import com.hisoka.mvi_exr.BR
 import com.hisoka.mvi_exr.databinding.MainFragmentBinding
+import org.koin.android.ext.android.inject
 
 class MainFragment : Fragment() {
 
@@ -13,7 +15,7 @@ class MainFragment : Fragment() {
 								fun newInstance() = MainFragment()
 				}
 
-				private lateinit var viewModel : MainViewModel
+				private val viewModel:MainViewModel by inject()
 				private lateinit var binding : MainFragmentBinding
 				override fun onCreateView(
 												inflater : LayoutInflater, container : ViewGroup?,
@@ -25,13 +27,14 @@ class MainFragment : Fragment() {
 
 				override fun onViewCreated(view : View, savedInstanceState : Bundle?) {
 								super.onViewCreated(view, savedInstanceState)
-								viewModel = MainViewModel()
-
+								binding.setVariable(BR.viewModel, viewModel)
+								binding.executePendingBindings()
 
 								viewModel.subscribeToStateChanges { state ->
 												if (state.toastMessage != null)
 																showToast(state.toastMessage)
 								}
+								viewModel.onAction(MainViewModel.Action.LoadUsers)
 								binding.buttonSave.setOnClickListener {
 												viewModel.onAction(MainViewModel.Action.AddClicked)
 								}
